@@ -1,0 +1,6 @@
+# domain model
+*.xlsx
+
+# folder
+node_modules/
+dist/

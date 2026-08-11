@@ -1,6 +1,6 @@
 // src/App.tsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { PolarisRuntime } from '@polaris-runtime/core/dev';
+import { logger, PolarisRuntime } from '@polaris-runtime/core/dev';
 import { RepoPlugin } from './plugins/repo.plugin';
 import { MeetingPlugin } from './plugins/meeting.plugin';
 import { WorkspacePlugin } from './plugins/workspace.plugin';
@@ -55,10 +55,10 @@ function App() {
         name: user.name
       });
       setCurrentUser(user);
-      console.log(`✅ Switched to ${user.name} (${user.role})`);
+      logger.info(`✅ Switched to ${user.name} (${user.role})`);
       loadMeetings();
     } catch (err) {
-      console.error('Failed to switch user:', err);
+      logger.error('Failed to switch user:', err);
       setError('Gagal berganti user');
     }
   };

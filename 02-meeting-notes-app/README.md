@@ -21,7 +21,7 @@ A complete example application built with **Polaris Runtime** and **React** that
 ```bash
 # 1. Clone the repository
 git clone https://github.com/polaris/examples.git
-cd examples/meeting-notes-app
+cd examples/02-meeting-notes-app
 
 # 2. Install dependencies (including Polaris Runtime)
 npm install

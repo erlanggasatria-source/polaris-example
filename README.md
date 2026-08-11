@@ -10,7 +10,8 @@ This repository contains complete, runnable example applications that demonstrat
 
 | Example | Description | Tech Stack |
 |---------|-------------|------------|
-| [Meeting Notes App](./meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage |
+| [01 Basic Note App](./01-basic-note-app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime |
+| [02 Meeting Notes App](./meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage |
 
 ---
 

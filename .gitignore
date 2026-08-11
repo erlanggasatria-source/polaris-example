@@ -1,5 +1,6 @@
 # domain model
 *.xlsx
+*.xlsx#
 
 # folder
 node_modules/

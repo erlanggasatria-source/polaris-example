@@ -11,8 +11,7 @@ export const runtime = new PolarisRuntime();
 runtime.register([notePlugin]);
 
 // 3. Helper can()
-export const can = (workflowPath: string, input?: any): boolean => {
-  logger.debug('can aktif');
+export const can = (workflowPath: string, input?: any): boolean => {  
   const result = runtime.canExecute(workflowPath, input);
   return result.allowed
 }

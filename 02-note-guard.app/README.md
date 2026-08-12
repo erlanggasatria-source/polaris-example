@@ -70,10 +70,14 @@ The can() helper is declared directly beside the runtime instance after register
 export const runtime = new PolarisRuntime();
 runtime.registerPlugin(notePlugin);
 
-// Direct helper export
-export const can = (workflowPath: string, input?: any): boolean => {
-  return runtime.canExecute(workflowPath, input);
-};
+/**
+ * Direct helper export returning clean boolean for UI guards.
+ * Polaris Engine automatically logs the failure reason via internal logger on development mode.
+ */
+export const can = (workflowPath: string, input?: any): boolean => {  
+  const result = runtime.canExecute(workflowPath, input);
+  return result.allowed
+}
 ```
 
 In React components (NoteItem.tsx), action buttons are reactively enabled or disabled by querying Polaris Engine using the expressive can() helper:

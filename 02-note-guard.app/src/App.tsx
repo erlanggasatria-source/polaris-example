@@ -62,6 +62,9 @@ export default function App() {
     <div className="app-container">
       <header>
         <h1>🔐 Polaris Example 02: Note Guard App</h1>
+        <span>
+    💡 <strong>Pro Tip:</strong> Allow browser pop-ups to open <strong>Polaris Explorer</strong> for sefl-describing app documentation!
+        </span>
         <p>Demonstrating Class Models, Declarative Rules (allowed), and Reactive UI Guards via can()</p>
       </header>
 

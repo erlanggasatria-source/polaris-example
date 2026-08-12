@@ -113,7 +113,7 @@ When importing @polaris-runtime/core/dev, Polaris automatically launches the Pol
 
 Experience the interactive application and inspect live workflow execution in real time:
 
-* **🚀 Launch Application:** [https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/](https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/)
+* **🚀 Launch Application:** [https://polaris-example.vercel.app/](https://polaris-example.vercel.app/)
 
 > **💡 Polaris Explorer Tip:** Allow browser pop-ups on initial load or click **"Launch Explorer Manually"** inside the app banner to visually inspect capability contracts, state transitions, and rule evaluation logs in real time.
 

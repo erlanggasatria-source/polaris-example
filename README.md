@@ -11,7 +11,7 @@ This repository contains complete, runnable example applications that demonstrat
 | Example | Description | Tech Stack | Live Preview |
 |---------|-------------|------------|--------------|
 | [01 Basic Note App](./01-basic-note-app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime | — |
-| [02 Note Guard App](./02-note-guard-app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/) |
+| [02 Note Guard App](./02-note-guard-app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-example.vercel.app/) |
 | [03 Meeting Notes App](./meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage | — |
 
 ---
@@ -20,7 +20,7 @@ This repository contains complete, runnable example applications that demonstrat
 
 Experience the interactive application and inspect live workflow execution in real time:
 
-* **🚀 Launch Application:** [https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/](https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/)
+* **🚀 Launch Application:** [https://polaris-example.vercel.app/](https://polaris-example.vercel.app/)
 
 > **💡 Polaris Explorer Tip:** Allow browser pop-ups on initial load or click **"Launch Explorer Manually"** inside the app banner to visually inspect capability contracts, state transitions, and rule evaluation logs in real time.
 

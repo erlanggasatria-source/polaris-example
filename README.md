@@ -8,11 +8,34 @@ This repository contains complete, runnable example applications that demonstrat
 
 ## 📚 Available Examples
 
-| Example | Description | Tech Stack |
-|---------|-------------|------------|
-| [01 Basic Note App](./01-basic-note-app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime |
-| [02 Note Guard App](./02-note-guard-app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven capability execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime |
-| [03 Meeting Notes App](./meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage |
+| Example | Description | Tech Stack | Live Preview |
+|---------|-------------|------------|--------------|
+| [01 Basic Note App](./01-basic-note-app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime | — |
+| [02 Note Guard App](./02-note-guard-app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/) |
+| [03 Meeting Notes App](./meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage | — |
+
+---
+
+## 🌐 Live Interactive Demo
+
+Experience the interactive application and inspect live workflow execution in real time:
+
+* **🚀 Launch Application:** [https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/](https://polaris-example-i7gyww9rt-polaris-runtime.vercel.app/)
+
+> **💡 Polaris Explorer Tip:** Allow browser pop-ups on initial load or click **"Launch Explorer Manually"** inside the app banner to visually inspect capability contracts, state transitions, and rule evaluation logs in real time.
+
+---
+
+## 🔍 Real-Time Development Inspection
+
+To observe how Polaris Engine orchestrates events, validates input, and evaluates `allowed` rules under the hood:
+
+1. Open your browser **Developer Tools** (`F12` or `Cmd + Option + I` / `Ctrl + Shift + I`).
+2. Switch to the **Console** tab.
+3. Execute actions in the app (e.g., creating, updating, locking, or deleting notes) to view detailed, real-time **`log.verbose`** output emitted directly by Polaris Runtime:
+   * **Workflow Orchestration Logs:** Step-by-step capability execution pipelines.
+   * **Rule Evaluation Diagnostics:** Exact reasons why actions are `allowed` or blocked (`canExecute`).
+   * **Domain State Mutations:** Encapsulated Class Model mutations and error payloads.
 
 ---
 

@@ -376,9 +376,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-submit-approval',
       description: 'Submit meeting for approval',
-      allowed: [
-        { key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'draft', source: 'input', operator: 'eq' }
+      allowed: [  
+        { key: 'status', value: 'draft', source: 'input', operator: 'eq' },
+        { key: 'userId', value: { key: 'createdBy', source: 'input' }, source: 'context', operator: 'eq' }        
       ],
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
@@ -392,11 +392,11 @@ export const MeetingPlugin: IPlugin = {
     // APPROVE
     {
       name: 'meeting/wf-approve',
-      description: 'Approve schedule',
-      allowed: [
-        { key: 'role', value: ['leader', 'secretary'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'waiting_approval', source: 'input', operator: 'eq' }
-      ],
+      description: 'Approve schedule by leader/secretary but not creator of meeting',
+      allowed: {
+        expr:`status === 'waiting_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
+        input:['status','createdBy'], context: ['role','userId']
+      },
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
         { name: 'get-meeting', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },
@@ -409,11 +409,11 @@ export const MeetingPlugin: IPlugin = {
     // REJECT APPROVAL
     {
       name: 'meeting/wf-reject-approval',
-      description: 'Reject schedule',
-      allowed: [
-        { key: 'role', value: ['leader', 'secretary'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'waiting_approval', source: 'input', operator: 'eq' }
-      ],
+      description: 'Reject schedule by leader/secretary but not creator of meeting',
+      allowed: {
+        expr:`status === 'waiting_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
+        input:['status','createdBy'], context: ['role','userId']
+      },      
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
         { name: 'get-meeting', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },
@@ -426,11 +426,11 @@ export const MeetingPlugin: IPlugin = {
     // ADD NOTE
     {
       name: 'meeting/wf-add-note',
-      description: 'Add note',
-      allowed: [
-        { key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'scheduled', source: 'input', operator: 'eq' }
-      ],
+      description: 'Add note only creator or leader/secretary',
+      allowed: {
+        expr:`status === 'scheduled' && (['leader', 'secretary'].includes(role) || createdBy === userId)`,
+        input:['status','createdBy'], context: ['role','userId']
+      },      
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
         { name: 'get-meeting', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },
@@ -444,10 +444,10 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-revise-note',
       description: 'Revise note',
-      allowed: [
-        { key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' },
-        { key: 'status', value: ['waiting_note_approval', 'done'], source: 'input', operator: 'in' }
-      ],
+      allowed: {
+        expr: `['waiting_note_approval', 'done'].includes(status) && ( createdBy === userId || ['leader','secretary'].includes(role) )`,
+        input: ['status','createdBy'], context: ['userId','role']
+      },      
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
         { name: 'get-meeting', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },
@@ -461,10 +461,10 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-approve-note',
       description: 'Approve note',
-      allowed: [
-        { key: 'role', value: ['leader'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'waiting_note_approval', source: 'input', operator: 'eq' }
-      ],
+      allowed: {
+        expr:`status === 'waiting_note_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
+        input:['status','createdBy'], context: ['role','userId']
+      },
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
         { name: 'get-meeting', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },
@@ -478,10 +478,10 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-reject-note',
       description: 'Reject note',
-      allowed: [
-        { key: 'role', value: ['leader'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'waiting_note_approval', source: 'input', operator: 'eq' }
-      ],
+      allowed: {
+        expr:`status === 'waiting_note_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
+        input:['status','createdBy'], context: ['role','userId']
+      },
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
         { name: 'get-meeting', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },
@@ -495,9 +495,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-edit-draft',
       description: 'Edit draft',
-      allowed: [
-        { key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'draft', source: 'input', operator: 'eq' }
+      allowed: [ 
+        { key: 'status', value: 'draft', source: 'input', operator: 'eq' },
+        { key: 'createdBy', value: { key: 'userId', source: 'context' }, source: 'input', operator: 'eq' }
       ],
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
@@ -512,9 +512,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-delete-draft',
       description: 'Delete draft',
-      allowed: [
-        { key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' },
-        { key: 'status', value: 'draft', source: 'input', operator: 'eq' }
+      allowed: [        
+        { key: 'status', value: 'draft', source: 'input', operator: 'eq' },
+        { key: 'createdBy', value: { key: 'userId', source: 'context' }, source: 'input', operator: 'eq' }
       ],
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
@@ -529,10 +529,10 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-cancel',
       description: 'Cancel meeting',
-      allowed: [
-        { key: 'role', value: ['leader', 'secretary'], source: 'context', operator: 'in' },
-        { key: 'status', value: ['waiting_approval', 'scheduled', 'waiting_note_approval'], source: 'input', operator: 'in' }
-      ],
+      allowed: {
+        expr:`['waiting_approval', 'scheduled', 'waiting_note_approval'].includes(status) && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
+        input:['status','createdBy'], context: ['role','userId']
+      },      
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
         { name: 'get-meeting', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },

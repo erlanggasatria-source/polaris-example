@@ -39,24 +39,22 @@ export default function MeetingDetail({
   const currentUserId = globalContext.get('userId') || 'unknown';
   const currentRole = globalContext.get('role') || 'member';
 
-  const status = meeting.status;
-  const isCreator = meeting.createdBy === currentUserId;
+  const status = meeting.status;  
 
   // ===== HELPERS =====
-  const can = (workflowName: string, extraInput: any = {}) => {
+  const can = (workflowName: string, extraInput: any = {}) => {    
     const result = runtime.canExecute(workflowName, {
-      id: meeting.id,
-      status: meeting.status,
-      domain: 'meetings',
-      meeting,
+      ...meeting,
+      createdBy: meeting.createdBy || '',
+      domain: 'meetings',      
       ...extraInput
-    });
+    });    
     return result.allowed;
   };
 
   const handleAction = (workflowName: string, input: any = {}) => {
     if (!meeting || !meeting.id) return;
-    const payload = { id: meeting.id, status: meeting.status, domain: 'meetings', meeting, ...input };
+    const payload = { id: meeting.id, status: meeting.status, createdBy: meeting.createdBy, domain: 'meetings', meeting, ...input };
     onAction(workflowName, payload);
   };
 
@@ -95,7 +93,7 @@ export default function MeetingDetail({
     const actions = [];
 
     // 1. Submit Approval (draft → waiting_approval atau waiting_note_approval)
-    if (status === 'draft' && isCreator && can('meeting/wf-submit-approval')) {
+    if (can('meeting/wf-submit-approval')) {
       actions.push(
         <button key="submit" className="btn-submit" onClick={() => handleAction('meeting/wf-submit-approval')} disabled={loading}>
           📤 Ajukan Approval
@@ -104,7 +102,7 @@ export default function MeetingDetail({
     }
 
     // 2. Approve Jadwal (waiting_approval → scheduled)
-    if (status === 'waiting_approval' && can('meeting/wf-approve')) {
+    if (can('meeting/wf-approve')) {
       actions.push(
         <button key="approve" className="btn-approve" onClick={() => handleAction('meeting/wf-approve')} disabled={loading}>
           ✅ Setujui Jadwal
@@ -113,7 +111,7 @@ export default function MeetingDetail({
     }
 
     // 3. Reject Jadwal (waiting_approval → draft)
-    if (status === 'waiting_approval' && can('meeting/wf-reject-approval')) {
+    if (can('meeting/wf-reject-approval')) {
       actions.push(
         <button key="reject" className="btn-reject" onClick={() => { setRejectType('approval'); setShowRejectModal(true); }} disabled={loading}>
           ❌ Tolak Jadwal
@@ -122,7 +120,7 @@ export default function MeetingDetail({
     }
 
     // 4. Add Note (scheduled → waiting_note_approval)
-    if (status === 'scheduled' && can('meeting/wf-add-note')) {
+    if (can('meeting/wf-add-note')) {
       actions.push(
         <button key="addNote" className="btn-note" onClick={() => setShowNoteInput(true)} disabled={loading}>
           📝 Tambah Note
@@ -131,13 +129,13 @@ export default function MeetingDetail({
     }
 
     // 5. Revise Note (waiting_note_approval → waiting_note_approval)
-    if (['waiting_note_approval', 'done'].includes(status) && isCreator && can('meeting/wf-revise-note')) {
+    if (can('meeting/wf-revise-note')) {
       actions.push(
         <button key="reviseNote" className="btn-revise" onClick={() => setShowNoteInput(true)} disabled={loading}>
           ✏️ Revisi Note
         </button>
       );
-    }
+    }    
 
     // 6. Approve Note (waiting_note_approval → done)
     if (status === 'waiting_note_approval' && can('meeting/wf-approve-note')) {
@@ -149,7 +147,7 @@ export default function MeetingDetail({
     }
 
     // 7. Reject Note (waiting_note_approval → scheduled)
-    if (status === 'waiting_note_approval' && can('meeting/wf-reject-note')) {
+    if (can('meeting/wf-reject-note')) {
       actions.push(
         <button key="rejectNote" className="btn-reject" onClick={() => { setRejectType('note'); setShowRejectModal(true); }} disabled={loading}>
           ❌ Tolak Note
@@ -158,7 +156,7 @@ export default function MeetingDetail({
     }
 
     // 8. Edit Draft (draft only)
-    if (status === 'draft' && isCreator && can('meeting/wf-edit-draft')) {
+    if (can('meeting/wf-edit-draft')) {
       actions.push(
         <button key="edit" className="btn-edit" onClick={() => setEditMode(true)} disabled={loading}>
           ✏️ Edit
@@ -167,7 +165,7 @@ export default function MeetingDetail({
     }
 
     // 9. Delete Draft (draft only)
-    if (status === 'draft' && isCreator && can('meeting/wf-delete-draft')) {
+    if (can('meeting/wf-delete-draft')) {
       actions.push(
         <button key="delete" className="btn-delete" onClick={() => {
           if (confirm('Yakin ingin menghapus meeting ini?')) {

@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@polaris-runtime/core": "^1.2.0",
+    "@polaris-runtime/core": "^2.0.0-alpha.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vitest": "^4.1.10"
@@ -19,6 +19,9 @@
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.0.0",
     "typescript": "^5.0.0",
-    "vite": "^8.2.1"
+    "vite": "^7.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
   }
 }

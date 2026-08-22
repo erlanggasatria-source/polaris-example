@@ -10,9 +10,11 @@ This repository contains complete, runnable example applications that demonstrat
 
 | Example | Description | Tech Stack | Live Preview |
 |---------|-------------|------------|--------------|
-| [01 Basic Note App](./01-basic-note-app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime | — |
-| [02 Note Guard App](./02-note-guard-app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-example.vercel.app/) |
-| [03 Meeting Notes App](./meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage | — |
+| [01 Basic Note App](./01-basic-note.app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime | — |
+| [02 Note Guard App](./02-note-guard.app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-example.vercel.app/) |
+| [03 Meeting Notes App](./03-meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage | — |
+| [04 Meeting Notes App](./04-meeting-new-skin/) | Experimental UI generated with LLM with bisnis model (Plugin) from example 03, AI Native success test | React + TypeScript + Polaris Runtime + localStorage | — |
+
 
 ---
 

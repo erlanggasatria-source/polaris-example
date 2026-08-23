@@ -69,6 +69,7 @@ const App: React.FC = () => {
       name: ctx.get('name') || 'Unknown',
       role: ctx.get('role') || 'member'
     });
+    fetchMeetings();
   };
 
   // 🔥 POLARIS STATE MANAGEMENT
@@ -143,8 +144,7 @@ const App: React.FC = () => {
   };
 
   // === VIEWS ===
-  if (!currentUser) {
-    fetchMeetings();
+  if (!currentUser) {  
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded shadow-md w-96">

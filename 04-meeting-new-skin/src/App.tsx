@@ -146,9 +146,24 @@ const App: React.FC = () => {
   // === VIEWS ===
   if (!currentUser) {  
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+        <span className="mb-4 text-center text-gray-700 border-b border-gray-300 pb-2">
+      💡 <strong>Pro Tip:</strong> Allow browser pop-ups to open <strong>Polaris Explorer</strong> for sefl-describing app documentation!
+        </span>
+        <p>Demonstrating Class Models, Declarative Rules (allowed), and Reactive UI Guards via can()</p>
+        <p>🔥 Note: This is a mock login for demonstration purposes. No real authentication is implemented.</p>
+        <p>💡 Tip: You can switch between different users to test the workflow and guards.</p>
+        <p>&nbsp;</p>     
+        <h1 className="text-2xl font-bold mb-4">🎯 Scenario Test you can try</h1>
+        <p>Login as Chen Fan (member) → create meeting → submit approval</p>
+        <p>Switch to Liu Ruyan (leader) → approve meeting → status waiting_note</p>
+        <p>Switch to Chen Fan → add note → status waiting_note_approval</p>
+        <p>Switch to Sheng Min Yan (secretary) → approve note → status done</p>
+        <p>&#128129; All buttons are show how guards are implemented</p>
+        <p className="mt-2 text-center text-gray-600">Note: You can also reject at any step to see the reject flow.</p>
+      <div className="flex justify-center">
         <div className="bg-white p-8 rounded shadow-md w-96">
-          <h2 className="text-2xl font-bold mb-6 text-center">Mock Login</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">Mock Login</h2>          
           {AVAILABLE_USERS.map(user => (
             <button
               key={user.userId}
@@ -159,6 +174,7 @@ const App: React.FC = () => {
             </button>
           ))}
         </div>
+      </div>
       </div>
     );
   }

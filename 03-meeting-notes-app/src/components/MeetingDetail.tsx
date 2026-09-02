@@ -1,5 +1,5 @@
 // src/components/MeetingDetail.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Meeting, MeetingNote } from '../types/meeting.types';
 
 interface MeetingDetailProps {
@@ -34,10 +34,6 @@ export default function MeetingDetail({
   });
 
   if (!meeting || !meeting.id) return <div className="meeting-detail"><p>Meeting tidak valid</p></div>;
-
-  const globalContext = runtime.getGlobalContext();
-  const currentUserId = globalContext.get('userId') || 'unknown';
-  const currentRole = globalContext.get('role') || 'member';
 
   const status = meeting.status;  
 

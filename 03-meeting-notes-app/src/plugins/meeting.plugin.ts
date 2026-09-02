@@ -1,7 +1,7 @@
 // src/plugins/meeting.plugin.ts
-import { IPlugin, successResult, errorResult, logger } from '@polaris-runtime/core';
-import { MeetingModel } from '../domain/meeting.model';
-import { MeetingStatus } from '../types/meeting.types';
+import { type IPlugin, successResult, errorResult, logger } from '@polaris-runtime/core';
+import { MeetingModel } from './domain/meeting.model';
+import type { MeetingStatus } from './types/meeting.types';
 
 // ============================================
 // CAPABILITIES (menggunakan class MeetingModel)
@@ -46,8 +46,9 @@ export const MeetingPlugin: IPlugin = {
       name: 'meeting/cap-create',
       description: 'Create new meeting from input',
       run: (input, context) => {
+        const payload = input.payload || input;
         const userId = context.context.get('userId') || 'unknown';
-        const model = MeetingModel.createFromInput(input, userId);
+        const model = MeetingModel.createFromInput(payload, userId);
         return successResult(model.toPayload(), 'meetings', model.id, 'Meeting created');
       }
     },
@@ -57,7 +58,7 @@ export const MeetingPlugin: IPlugin = {
       name: 'meeting/cap-validate-submit',
       description: 'Submit approval – auto detect note',
       run: (input, context) => {
-        const meetingData = input.payload;
+        const meetingData = input.payload || input;
         const userId = context.context.get('userId') || 'unknown';
         const model = new MeetingModel(meetingData);
 
@@ -85,7 +86,7 @@ export const MeetingPlugin: IPlugin = {
       name: 'meeting/cap-validate-approve',
       description: 'Approve schedule',
       run: (input, context) => {
-        const meetingData = input.payload;
+        const meetingData = input.payload || input;
         const userId = context.context.get('userId') || 'unknown';
         const role = context.context.get('role') || 'member';
         const model = new MeetingModel(meetingData);
@@ -202,7 +203,7 @@ export const MeetingPlugin: IPlugin = {
           logger.error(`Status is "${model.status}", not waiting_note_approval.`);
           throw new Error(`Status is "${model.status}", not waiting_note_approval.`);
         }
-        if (!model.validateRole(role, ['leader'])) {
+        if (!model.validateRole(role, ['leader','secretary'])) {
           logger.error('Only leader can approve note');
           throw new Error('Only leader can approve note');
         }
@@ -218,6 +219,7 @@ export const MeetingPlugin: IPlugin = {
       name: 'meeting/cap-validate-reject-note',
       description: 'Reject note',
       run: (input, context) => {
+        console.debug(input);
         const meetingData = input.payload;
         const userId = context.context.get('userId') || 'unknown';
         const role = context.context.get('role') || 'member';
@@ -228,7 +230,7 @@ export const MeetingPlugin: IPlugin = {
           logger.error(`Status is "${model.status}", not waiting_note_approval.`);
           throw new Error(`Status is "${model.status}", not waiting_note_approval.`);
         }
-        if (!model.validateRole(role, ['leader'])) {
+        if (!model.validateRole(role, ['leader','secretary'])) {
           logger.error('Only leader can reject note');
           throw new Error('Only leader can reject note');
         }
@@ -259,8 +261,8 @@ export const MeetingPlugin: IPlugin = {
         }
 
         // Parse agenda jika ada
-        if (updates.agenda && typeof updates.agenda === 'string') {
-          updates.agenda = updates.agenda.split('\n').filter(Boolean);
+        if (updates.agenda) {
+          updates.agenda = input.agenda;
         }
 
         // Jika ada note, update note (tambahkan atau ganti)
@@ -342,6 +344,9 @@ export const MeetingPlugin: IPlugin = {
       name: 'meeting/wf-list',
       description: 'List all meetings',
       allowed: [{ key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' }],
+      inputSchema: { 'input': `null // no input required but use unique identifier avoid idempotent guard like { _t: Date.now() }` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meetings: Meeting[] } // data is array of records` },
       steps: [
         { name: 'prepare-repo', useCapability: 'meeting/cap-prepare-repo' },
         { name: 'fetch-repo', useCapability: 'repo/cap-list' }
@@ -353,6 +358,9 @@ export const MeetingPlugin: IPlugin = {
       name: 'meeting/wf-create',
       description: 'Create new meeting',
       allowed: [{ key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' }],
+      inputSchema: { 'input': `{ meetingData: omit<Meeting, ('id', 'status', 'createdBy', 'createdAt')> } //use type definition and form to comply` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       steps: [
         { name: 'create', useCapability: 'meeting/cap-create' },
         { name: 'prepare-repo', useCapability: 'meeting/cap-prepare-repo' },
@@ -365,10 +373,12 @@ export const MeetingPlugin: IPlugin = {
       name: 'meeting/wf-get',
       description: 'Get meeting by ID',
       allowed: [{ key: 'role', value: ['member', 'secretary', 'leader'], source: 'context', operator: 'in' }],
+      inputSchema: { 'input': `{ id: string } // meeting ID` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       steps: [
         { name: 'validate-get', useCapability: 'meeting/cap-get-validation' },
-        { name: 'get-repo', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] },
-        { name: 'prepare-repo', useCapability: 'meeting/cap-prepare-repo', dependsOn: ['get-repo'] }
+        { name: 'get-repo', useCapability: 'repo/cap-get', dependsOn: ['validate-get'] }
       ]
     },
 
@@ -376,6 +386,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-submit-approval',
       description: 'Submit meeting for approval',
+      inputSchema: { 'input': `{ id: string } // meeting ID` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: [  
         { key: 'status', value: 'draft', source: 'input', operator: 'eq' },
         { key: 'userId', value: { key: 'createdBy', source: 'input' }, source: 'context', operator: 'eq' }        
@@ -393,6 +406,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-approve',
       description: 'Approve schedule by leader/secretary but not creator of meeting',
+      inputSchema: { 'input': `{ id: string } // meeting ID` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: {
         expr:`status === 'waiting_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
         input:['status','createdBy'], context: ['role','userId']
@@ -410,6 +426,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-reject-approval',
       description: 'Reject schedule by leader/secretary but not creator of meeting',
+      inputSchema: { 'input': `{ id: string, reason: string } // meeting ID and reason for rejection` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: {
         expr:`status === 'waiting_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
         input:['status','createdBy'], context: ['role','userId']
@@ -427,6 +446,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-add-note',
       description: 'Add note only creator or leader/secretary',
+      inputSchema: { 'input': `{ id: string, note: string } // meeting ID and note content` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: {
         expr:`status === 'scheduled' && (['leader', 'secretary'].includes(role) || createdBy === userId)`,
         input:['status','createdBy'], context: ['role','userId']
@@ -444,6 +466,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-revise-note',
       description: 'Revise note',
+      inputSchema: { 'input': `{ id: string, note: string } // meeting ID and new note content` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: {
         expr: `['waiting_note_approval', 'done'].includes(status) && ( createdBy === userId || ['leader','secretary'].includes(role) )`,
         input: ['status','createdBy'], context: ['userId','role']
@@ -461,6 +486,10 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-approve-note',
       description: 'Approve note',
+      inputSchema: { 'input': `{ id: string } // meeting ID`,
+        'canExecute': `{status, createdBy} // special case createdBy from note activeNote, not from meeting data, approver not creator the note` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: {
         expr:`status === 'waiting_note_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
         input:['status','createdBy'], context: ['role','userId']
@@ -478,6 +507,10 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-reject-note',
       description: 'Reject note',
+      inputSchema: { 'input': `{ id: string, reason: string } // meeting ID and reason for rejection`,
+        'canExecute': `{status, createdBy} // special case createdBy from note activeNote, not from meeting data, approver not creator the note` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: {
         expr:`status === 'waiting_note_approval' && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
         input:['status','createdBy'], context: ['role','userId']
@@ -495,6 +528,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-edit-draft',
       description: 'Edit draft',
+      inputSchema: { 'input': `{ meeting: Meeting } // meeting data to update` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: [ 
         { key: 'status', value: 'draft', source: 'input', operator: 'eq' },
         { key: 'createdBy', value: { key: 'userId', source: 'context' }, source: 'input', operator: 'eq' }
@@ -512,6 +548,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-delete-draft',
       description: 'Delete draft',
+      inputSchema: { 'input': `{ id: string } // meeting ID` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ null } // no data returned if deletion is successful` },
       allowed: [        
         { key: 'status', value: 'draft', source: 'input', operator: 'eq' },
         { key: 'createdBy', value: { key: 'userId', source: 'context' }, source: 'input', operator: 'eq' }
@@ -529,6 +568,9 @@ export const MeetingPlugin: IPlugin = {
     {
       name: 'meeting/wf-cancel',
       description: 'Cancel meeting',
+      inputSchema: { 'input': `{ id: string, reason: string } // meeting ID and reason for cancellation` },
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }`,
+        'payload': `{ meeting: Meeting } // data is a single meeting record` },
       allowed: {
         expr:`['waiting_approval', 'scheduled', 'waiting_note_approval'].includes(status) && ['leader', 'secretary'].includes(role) && createdBy !== userId`,
         input:['status','createdBy'], context: ['role','userId']

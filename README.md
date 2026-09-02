@@ -1,3 +1,25 @@
+<p align="center">
+  <img src="https://polaris-runtime.my.id/logo-mark.svg" alt="Polaris Runtime" width="120"/>
+</p>
+
+<h1 align="center">Polaris Runtime</h1>
+
+<p align="center">
+  <strong>Self-describing, grammar-first workflow engine for humans and AI.</strong>
+</p>
+
+<p align="center">
+  <a href="https://polaris-runtime.my.id">🌐 Landing Page</a> •
+  <a href="https://polaris-runtime.my.id/gallery">🖼️ Gallery</a> •
+  <a href="https://github.com/erlanggasatria-source/polaris-runtime">🐙 GitHub</a>
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@polaris-runtime/core"><img src="https://img.shields.io/npm/v/@polaris-runtime/core" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@polaris-runtime/core"><img src="https://img.shields.io/npm/dt/@polaris-runtime/core" alt="npm downloads" /></a>
+  <a href="https://github.com/erlanggasatria-source/polaris-runtime/blob/main/LICENSE"><img src="https://img.shields.io/github/license/erlanggasatria-source/polaris-runtime" alt="license" /></a>
+</p>
+
 # Polaris Examples
 
 > **Live examples of applications built with Polaris Runtime.**
@@ -10,10 +32,10 @@ This repository contains complete, runnable example applications that demonstrat
 
 | Example | Description | Tech Stack | Live Preview |
 |---------|-------------|------------|--------------|
-| [01 Basic Note App](./01-basic-note.app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime | — |
-| [02 Note Guard App](./02-note-guard.app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-example.vercel.app/) |
-| [03 Meeting Notes App](./03-meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage | — |
-| [04 Meeting Notes App](./04-meeting-new-skin/) | Experimental UI generated with LLM with bisnis model (Plugin) from example 03, AI Native success test | React + TypeScript + Polaris Runtime + localStorage | [🚀 Live Demo](https://polaris-example-meeting.vercel.app/) |
+| [01 Basic Note App](./01-basic-note.app/) | Foundational example demonstrating single-plugin registration, capability & workflow orchestration, domain-targeted state management, and unified event subscriptions for UI feedback. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-runtime.my.id/basic-note) |
+| [02 Note Guard App](./02-note-guard.app/) | Intermediate example showcasing OOP domain model encapsulation, declarative authorization rules (`allowed`), exception-driven execution, and ultra-thin UI guards via `can()`. | React + TypeScript + Polaris Runtime | [🚀 Live Demo](https://polaris-runtime.my.id/note-guard) |
+| [03 Meeting Notes App](./03-meeting-notes-app/) | Full-featured meeting management with state machine, role-based permissions, and real-time event subscription. | React + TypeScript + Polaris Runtime + localStorage | [🚀 Live Demo](https://polaris-runtime.my.id/basic-meeting) |
+| [04 Meeting Notes App](./04-meeting-new-skin/) | Experimental UI generated with LLM with bisnis model (Plugin) from example 03, AI Native success test | React + TypeScript + Polaris Runtime + localStorage | [🚀 Live Demo]([🚀 Live Demo](https://polaris-runtime.my.id/new-meeting)) |
 
 
 ---

@@ -1,4 +1,4 @@
-import { IPlugin, successResult, errorResult, logger } from '@polaris-runtime/core';
+import { type IPlugin, successResult, logger } from '@polaris-runtime/core';
 
 export const WorkspacePlugin: IPlugin = {
   name: 'workspace',
@@ -21,6 +21,8 @@ export const WorkspacePlugin: IPlugin = {
       name: 'workspace/wf-set-context',
       description: '🔒 ALLOWED: Set global context',
       allowed: [],
+      inputSchema: { 'input': `{ data } // example: { user: 'john', role: 'admin', workspace: 'main' }` },
+      outputSchema: { 'output': `{ status, data, message } // data from input store in global context` },
       steps: [{ name: 'SetContext', useCapability: 'workspace/cap-set-context' }]
     }
   ]

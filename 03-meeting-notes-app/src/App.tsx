@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { logger, PolarisRuntime } from '@polaris-runtime/core/dev';
 import { RepoPlugin } from './plugins/repo.plugin';
 import { MeetingPlugin } from './plugins/meeting.plugin';
@@ -37,7 +37,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(DEFAULT_USER);
 
   const contextSet = useRef(false);
-  const successTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ===== SET CONTEXT (pertama kali) =====
   useEffect(() => {

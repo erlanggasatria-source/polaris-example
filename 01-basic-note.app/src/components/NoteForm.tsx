@@ -19,12 +19,12 @@ export const NoteForm: React.FC = () => {
       <h2>Create New Note</h2>
       <input
         type="text"
-        placeholder="Note Title..."
+        placeholder="Note Title..."        
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-      />
+      /><br/>
       <textarea
-        placeholder="Note Content..."
+        placeholder="Note Content..."        
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />

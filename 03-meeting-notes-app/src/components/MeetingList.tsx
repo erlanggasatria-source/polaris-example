@@ -1,4 +1,3 @@
-import React from 'react';
 import { Meeting } from '../types/meeting.types';
 
 interface MeetingListProps {
@@ -19,7 +18,7 @@ const statusLabels: Record<string, { label: string; color: string }> = {
   canceled: { label: 'Canceled', color: '#f76c6c' }
 };
 
-export default function MeetingList({ meetings, loading, selectedId, onSelect, onRefresh }: MeetingListProps) {
+export default function MeetingList({ meetings, loading, selectedId, onSelect }: MeetingListProps) {
   // Sort by date descending
   const sorted = [...meetings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 

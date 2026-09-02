@@ -1,34 +1,34 @@
-import { IPlugin, successResult, errorResult , logger } from '@polaris-runtime/core';
+import { type IPlugin, successResult, errorResult, logger } from '@polaris-runtime/core';
 
 const DB_KEY = 'polaris_meeting_db';
 
-function getDB(): Record<string, any[]> {
+type RepoRecord = Record<string, unknown> & { id?: string | number };
+type RepoDB = Record<string, RepoRecord[]>;
+
+function getDB(): RepoDB {
   const data = localStorage.getItem(DB_KEY);
-  return data ? JSON.parse(data) : {};
+  return data ? (JSON.parse(data) as RepoDB) : {};
 }
 
-function saveDB(db: Record<string, any[]>): void {
+function saveDB(db: RepoDB): void {
   localStorage.setItem(DB_KEY, JSON.stringify(db));
 }
 
-function getCollection(db: Record<string, any[]>, domain: string): any[] {
+function getCollection(db: RepoDB, domain: string): RepoRecord[] {
   if (!db[domain]) db[domain] = [];
   return db[domain];
-}
-
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
 }
 
 export const RepoPlugin: IPlugin = {
   name: 'repo',
   version: '1.0.0',
   description: 'Repository - localStorage for meeting app',
-
   capabilities: [
     {
       name: 'repo/cap-save',
       description: 'Save data to repository',
+      inputSchema: {'input': `{ domain, data } // domain exp. meeting just like table name, data include id, exp. { id: 1, name: 'test' }`},
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }` },              
       run: (input) => {
         logger.verbose(`[Repo] Saving to domain: ${input.domain}`);
         const data = input.payload?.data || input.data;
@@ -51,6 +51,8 @@ export const RepoPlugin: IPlugin = {
     {
       name: 'repo/cap-get',
       description: 'Get data from repository',
+      inputSchema: {'input': `{ domain, id } // domain exp. meeting just like table name, id is the unique identifier of the record`},
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }` },              
       run: (input) => {
         const domain = input.payload?.domain || input.domain;
         const id = input.payload?.id || input.id;
@@ -59,7 +61,7 @@ export const RepoPlugin: IPlugin = {
         try {
           const db = getDB();
           const collection = getCollection(db, domain);
-          const record = collection.find((r: any) => r.id === id);
+          const record = collection.find((r: RepoRecord) => r.id === id);
           if (!record) return errorResult(`Record "${id}" not found`, domain, id);
           return successResult(record, domain, id, `Found in ${domain}`);
         } catch (err) {
@@ -71,7 +73,9 @@ export const RepoPlugin: IPlugin = {
     {
       name: 'repo/cap-list',
       description: 'List all data from repository',
-      run: (input, context) => {
+      inputSchema: {'input': `{ domain } // domain exp. meeting just like table name`},
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }` },
+      run: (input) => {
         const domain = input.payload?.domain || input.domain;
         if (!domain) return errorResult('Domain required');
 
@@ -88,6 +92,8 @@ export const RepoPlugin: IPlugin = {
     {
       name: 'repo/cap-update',
       description: 'Update data in repository',
+      inputSchema: {'input': `{ domain, id, data } // domain exp. meeting just like table name, id is the unique identifier of the record, data contains the fields to update`},
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }` },
       run: (input) => {
         const domain = input.payload?.domain || input.domain;
         const id = input.payload?.id || input.id;
@@ -97,13 +103,13 @@ export const RepoPlugin: IPlugin = {
         try {
           const db = getDB();
           const collection = getCollection(db, domain);
-          const index = collection.findIndex((r: any) => r.id === id);
+          const index = collection.findIndex((r: RepoRecord) => r.id === id);
           if (index === -1) return errorResult(`Record "${id}" not found`, domain, id);
 
           collection[index] = { ...collection[index], ...data };
 
-          console.log('[repo/cap-update] before update, collection:', collection);
-          console.log('[repo/cap-update] updating index:', index);
+          logger.verbose('[repo/cap-update] before update, collection:', collection);
+          logger.verbose('[repo/cap-update] updating index:', index);
 
 
           saveDB(db);
@@ -117,6 +123,8 @@ export const RepoPlugin: IPlugin = {
     {
       name: 'repo/cap-delete',
       description: 'Delete data from repository',
+      inputSchema: {'input': `{ domain, id } // domain exp. meeting just like table name, id is the unique identifier of the record`},
+      outputSchema: { 'output': `{ status, domain, id, payload, message, error }` },
       run: (input) => {
         const domain = input.payload?.domain || input.domain;
         const id = input.payload?.id || input.id;
@@ -125,7 +133,7 @@ export const RepoPlugin: IPlugin = {
         try {
           const db = getDB();
           const collection = getCollection(db, domain);
-          const filtered = collection.filter((r: any) => r.id !== id);
+          const filtered = collection.filter((r: RepoRecord) => r.id !== id);
           if (filtered.length === collection.length) {
             return errorResult(`Record "${id}" not found`, domain, id);
           }
